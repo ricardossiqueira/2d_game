@@ -1,7 +1,7 @@
 import pygame
 from random import choice
 from src.functions.helper import import_csv_layout, import_folder
-from src.config.settings import TILE_SIZE, WORLD_MAP
+from src.config.settings import TILE_SIZE
 from src.classes.Tile import Tile
 from src.classes.Player import Player
 from src.debug.debugging_tool import debug
@@ -58,6 +58,7 @@ class Level:
     def run(self):
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
+        debug(self.player.status)
 
 
 class YSortCameraGroup(pygame.sprite.Group):
