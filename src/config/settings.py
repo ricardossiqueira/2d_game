@@ -3,6 +3,28 @@ HEIGHT = 720
 FPS = 60
 TILE_SIZE = 64
 
+# ui
+BAR_HEIGHT = 20
+HP_BAR_WIDTH = 200
+STA_BAR_WIDTH = 140
+MP_BAR_WIDTH = 180
+ITEM_BOX_SIZE = 50
+UI_FONT = 'src/graphics/font/joystix.ttf'
+UI_FONT_SIZE = 18
+
+# general colors
+WATER_COLOR = '#71ddee'
+UI_BG_COLOR = '#222222'
+UI_BORDER_COLOR = '#111111'
+TEXT_COLOR = '#EEEEEE'
+
+# ui colors
+HP_COLOR = 'red'
+STA_COLOR = 'yellow'
+MP_COLOR = 'blue'
+UI_ACTIVE_COLOR = 'gold'
+
+# weapons
 WEAPON_DATA = {
     'sword': {
         'cooldown': 100,
