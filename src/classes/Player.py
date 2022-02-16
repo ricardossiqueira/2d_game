@@ -33,6 +33,9 @@ class Player(pygame.sprite.Sprite):
         self.destroy_attack = destroy_attack
         self.weapon_index = 0
         self.weapon = list(WEAPON_DATA.keys())[self.weapon_index]
+        self.can_switch_weapon = True
+        self.weapon_switch_time = None
+        self.weapon_switch_cd = 200
 
     def import_player_assets(self):
         char_path = 'src/graphics/player/'
@@ -79,15 +82,26 @@ class Player(pygame.sprite.Sprite):
                 self.direction.x = 0
 
             # attack
-            if keys[pygame.K_e] and not self.attacking:
-                self.attacking = True
-                self.attack_time = pygame.time.get_ticks()
-                self.create_attack()
+            if not self.attacking:
+                if keys[pygame.K_e]:
+                    self.attacking = True
+                    self.attack_time = pygame.time.get_ticks()
+                    self.create_attack()
 
-            if keys[pygame.K_r] and not self.attacking:
-                self.attacking = True
-                self.attack_time = pygame.time.get_ticks()
-                self.create_attack()
+                if keys[pygame.K_r]:
+                    self.attacking = True
+                    self.attack_time = pygame.time.get_ticks()
+                    self.create_attack()
+
+            # switch weapons
+            if self.can_switch_weapon:
+                for weapon_index in range(len(WEAPON_DATA)):
+                    if keys[pygame.K_1 + weapon_index]:
+                        self.can_switch_weapon = False
+                        self.weapon_switch_time = pygame.time.get_ticks()
+                        self.weapon_index = weapon_index
+                        self.weapon = list(
+                            WEAPON_DATA.keys())[self.weapon_index]
 
     def get_status(self):
         # idle status
@@ -146,6 +160,10 @@ class Player(pygame.sprite.Sprite):
             if current_time - self.attack_time >= self.attack_cd:
                 self.attacking = False
                 self.destroy_attack()
+
+        if not self.can_switch_weapon:
+            if current_time - self.weapon_switch_time >= self.weapon_switch_cd:
+                self.can_switch_weapon = True
 
     def animate(self):
         animation = self.animations[self.status]
