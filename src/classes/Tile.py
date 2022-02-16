@@ -1,5 +1,4 @@
 import pygame
-
 from src.config.settings import TILE_SIZE
 
 

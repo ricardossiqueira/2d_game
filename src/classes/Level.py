@@ -1,5 +1,6 @@
 import pygame
 from random import choice
+from src.classes.Weapon import Weapon
 from src.functions.helper import import_csv_layout, import_folder
 from src.config.settings import TILE_SIZE
 from src.classes.Tile import Tile
@@ -16,6 +17,9 @@ class Level:
         # groups
         self.visible_sprites = YSortCameraGroup()
         self.obstacle_sprites = pygame.sprite.Group()
+
+        # attack sprites
+        self.current_attack = None
 
         # sprite setup
         self.generate_map()
@@ -52,13 +56,21 @@ class Level:
                                  [self.visible_sprites, self.obstacle_sprites],
                                  'object', surf)
 
-        self.player = Player((2000, 1430), [self.visible_sprites],
-                             self.obstacle_sprites)
+        self.player = Player((2000, 1400), [self.visible_sprites],
+                             self.obstacle_sprites, self.create_attack,
+                             self.destroy_attack)
+
+    def create_attack(self):
+        self.current_attack = Weapon(self.player, [self.visible_sprites])
+
+    def destroy_attack(self):
+        if self.current_attack:
+            self.current_attack.kill()
+        self.current_attack = None
 
     def run(self):
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
-        debug(self.player.status)
 
 
 class YSortCameraGroup(pygame.sprite.Group):
