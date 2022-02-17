@@ -1,5 +1,5 @@
 import pygame
-from src.config.settings import SPELL_DATA, WEAPON_DATA
+from src.config.settings import *
 from src.functions.helper import import_folder
 from src.debug.debugging_tool import debug
 
@@ -46,14 +46,7 @@ class Player(pygame.sprite.Sprite):
         self.spell_switch_cd = 0
 
         # stats
-        self.base_stats = {
-            'hp': 100,
-            'mp': 80,
-            'sta': 60,
-            'atk': 10,
-            'int': 4,
-            'dex': 6
-        }
+        self.base_stats = PLAYER_DATA
         self.hp = self.base_stats['hp']
         self.sta = self.base_stats['sta']
         self.mp = self.base_stats['mp']
@@ -61,7 +54,6 @@ class Player(pygame.sprite.Sprite):
         self.spd = self.base_stats['dex'] * 0.8
 
     def import_player_assets(self):
-        char_path = 'src/graphics/player/'
         self.animations = {
             'up': [],
             'down': [],
@@ -78,7 +70,8 @@ class Player(pygame.sprite.Sprite):
         }
 
         for animation in self.animations.keys():
-            self.animations[animation] = import_folder(char_path + animation)
+            self.animations[animation] = import_folder(
+                PLAYER_DATA['graphics'] + animation)
 
     def input(self):
         if not self.attacking:
