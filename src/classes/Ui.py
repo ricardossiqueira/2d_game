@@ -47,9 +47,10 @@ class Ui:
 
         self.display_surface.blit(text_surf, text_rect)
 
-    def selection_box(self, left, top, bg_color, weapon_index):
+    def selection_box(self, left, top, current_weapon_index, weapon_index):
         # bg
         bg_rect = pygame.Rect(left, top, ITEM_BOX_SIZE, ITEM_BOX_SIZE)
+        bg_color = UI_ACTIVE_COLOR if weapon_index == current_weapon_index else UI_BG_COLOR
         pygame.draw.rect(self.display_surface, bg_color, bg_rect)
         pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
 
@@ -72,8 +73,6 @@ class Ui:
                       MP_COLOR)
         self.show_exp(player.exp)
         for weapon_index in range(len(WEAPON_DATA)):
-            self.selection_box(
-                (ITEM_BOX_SIZE + 10) * weapon_index + 10,
-                self.display_surface.get_height() - ITEM_BOX_SIZE - 10,
-                UI_ACTIVE_COLOR if weapon_index == player.weapon_index else
-                UI_BG_COLOR, weapon_index)
+            left = (ITEM_BOX_SIZE + 10) * weapon_index + 10
+            top = self.display_surface.get_height() - ITEM_BOX_SIZE - 10
+            self.selection_box(left, top, player.weapon_index, weapon_index)
