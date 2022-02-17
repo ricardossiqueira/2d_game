@@ -22,33 +22,47 @@ TEXT_COLOR = '#EEEEEE'
 HP_COLOR = 'red'
 STA_COLOR = 'yellow'
 MP_COLOR = 'blue'
-UI_ACTIVE_COLOR = 'gold'
+UI_ACTIVE_COLOR = '#444444'
 
 # weapons
 WEAPON_DATA = {
     'sword': {
-        'cooldown': 100,
-        'damage': 15,
+        'cd': 100,
+        'pow': 15,
         'graphic': 'src/graphics/weapons/sword/full.png'
     },
     'lance': {
-        'cooldown': 400,
-        'damage': 30,
+        'cd': 400,
+        'pow': 30,
         'graphic': 'src/graphics/weapons/lance/full.png'
     },
     'axe': {
-        'cooldown': 300,
-        'damage': 20,
+        'cd': 300,
+        'pow': 20,
         'graphic': 'src/graphics/weapons/axe/full.png'
     },
     'rapier': {
-        'cooldown': 50,
-        'damage': 8,
+        'cd': 50,
+        'pow': 8,
         'graphic': 'src/graphics/weapons/rapier/full.png'
     },
     'sai': {
-        'cooldown': 80,
-        'damage': 10,
+        'cd': 80,
+        'pow': 10,
         'graphic': 'src/graphics/weapons/sai/full.png'
+    }
+}
+
+# spells
+SPELL_DATA = {
+    'flame': {
+        'pow': 5,
+        'mp': 20,
+        'graphic': 'src/graphics/particles/flame/fire.png'
+    },
+    'heal': {
+        'pow': 20,
+        'mp': 10,
+        'graphic': 'src/graphics/particles/heal/heal.png'
     }
 }

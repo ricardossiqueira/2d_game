@@ -21,6 +21,12 @@ class Ui:
             for weapon in WEAPON_DATA.values()
         ]
 
+        # load spell graphics
+        self.spell_graphics = [
+            pygame.image.load(spell['graphic']).convert_alpha()
+            for spell in SPELL_DATA.values()
+        ]
+
     def draw_bar(self, current, max, bg_rect, color):
         # draw bg
         pygame.draw.rect(self.display_surface, UI_BG_COLOR, bg_rect)
@@ -47,16 +53,16 @@ class Ui:
 
         self.display_surface.blit(text_surf, text_rect)
 
-    def selection_box(self, left, top, current_weapon_index, weapon_index):
+    def selection_box(self, left, top, surfaces, current_index, map_index):
         # bg
         bg_rect = pygame.Rect(left, top, ITEM_BOX_SIZE, ITEM_BOX_SIZE)
-        bg_color = UI_ACTIVE_COLOR if weapon_index == current_weapon_index else UI_BG_COLOR
+        bg_color = UI_ACTIVE_COLOR if map_index == current_index else UI_BG_COLOR
         pygame.draw.rect(self.display_surface, bg_color, bg_rect)
         pygame.draw.rect(self.display_surface, UI_BORDER_COLOR, bg_rect, 3)
 
-        # overlay
+        # overlay graphics
         item_size = ITEM_BOX_SIZE * 0.8
-        content_surf = self.weapon_graphics[weapon_index]
+        content_surf = surfaces[map_index]
         scaled_width = content_surf.get_width(
         ) * item_size / content_surf.get_height()
         content_surf = pygame.transform.scale(content_surf,
@@ -72,7 +78,17 @@ class Ui:
         self.draw_bar(player.mp, player.base_stats['mp'], self.mp_bar_rect,
                       MP_COLOR)
         self.show_exp(player.exp)
+
+        # weapons
         for weapon_index in range(len(WEAPON_DATA)):
             left = (ITEM_BOX_SIZE + 10) * weapon_index + 10
+            top = self.display_surface.get_height() - (ITEM_BOX_SIZE + 10) * 2
+            self.selection_box(left, top, self.weapon_graphics,
+                               player.weapon_index, weapon_index)
+
+        # spells
+        for spell_index in range(len(SPELL_DATA)):
+            left = (ITEM_BOX_SIZE + 10) * spell_index + 10
             top = self.display_surface.get_height() - ITEM_BOX_SIZE - 10
-            self.selection_box(left, top, player.weapon_index, weapon_index)
+            self.selection_box(left, top, self.spell_graphics,
+                               player.spell_index, spell_index)

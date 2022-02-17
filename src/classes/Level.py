@@ -62,7 +62,8 @@ class Level:
 
         self.player = Player((2000, 1400), [self.visible_sprites],
                              self.obstacle_sprites, self.create_attack,
-                             self.destroy_attack)
+                             self.destroy_attack, self.create_spell,
+                             self.destroy_spell)
 
     def create_attack(self):
         self.current_attack = Weapon(self.player, [self.visible_sprites])
@@ -71,6 +72,12 @@ class Level:
         if self.current_attack:
             self.current_attack.kill()
         self.current_attack = None
+
+    def create_spell(self, pow, mp, style):
+        print(pow, mp, style)
+
+    def destroy_spell(self):
+        pass
 
     def run(self):
         self.visible_sprites.custom_draw(self.player)

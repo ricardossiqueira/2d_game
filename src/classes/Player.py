@@ -1,5 +1,5 @@
 import pygame
-from src.config.settings import WEAPON_DATA
+from src.config.settings import SPELL_DATA, WEAPON_DATA
 from src.functions.helper import import_folder
 from src.debug.debugging_tool import debug
 
@@ -7,7 +7,7 @@ from src.debug.debugging_tool import debug
 class Player(pygame.sprite.Sprite):
 
     def __init__(self, pos, groups, obstacle_sprites, create_attack,
-                 destroy_attack):
+                 destroy_attack, create_spell, destroy_spell):
         super().__init__(groups)
         self.image = pygame.image.load(
             'src/graphics/test/player.png').convert_alpha()
@@ -33,8 +33,17 @@ class Player(pygame.sprite.Sprite):
         self.weapon_index = 0
         self.weapon = list(WEAPON_DATA.keys())[self.weapon_index]
         self.can_switch_weapon = True
-        self.weapon_switch_time = None
+        self.weapon_switch_duration = None
         self.weapon_switch_cd = 200
+
+        # spells
+        self.create_spell = create_spell
+        self.destroy_spell = destroy_spell
+        self.spell_index = 0
+        self.spell = list(SPELL_DATA.keys())[self.spell_index]
+        self.can_switch_spell = True
+        self.spell_switch_duration = None
+        self.spell_switch_cd = 0
 
         # stats
         self.base_stats = {
@@ -95,27 +104,39 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.direction.x = 0
 
-            # attack
-            if not self.attacking:
-                if keys[pygame.K_e]:
-                    self.attacking = True
-                    self.attack_time = pygame.time.get_ticks()
-                    self.create_attack()
+            # atack
+            if keys[pygame.K_e] and not self.attacking:
+                self.attacking = True
+                self.attack_time = pygame.time.get_ticks()
+                self.create_attack()
 
-                if keys[pygame.K_r]:
-                    self.attacking = True
-                    self.attack_time = pygame.time.get_ticks()
-                    self.create_attack()
+            # spell
+            if keys[pygame.K_r] and not self.attacking:
+                self.attacking = True
+                self.attack_time = pygame.time.get_ticks()
+                self.create_spell(pow=SPELL_DATA[self.spell]['pow'] *
+                                  self.base_stats['int'],
+                                  mp=SPELL_DATA[self.spell]['mp'],
+                                  style=self.spell)
 
             # switch weapons
             if self.can_switch_weapon:
                 for weapon_index in range(len(WEAPON_DATA)):
                     if keys[pygame.K_1 + weapon_index]:
                         self.can_switch_weapon = False
-                        self.weapon_switch_time = pygame.time.get_ticks()
+                        self.weapon_switch_duration = pygame.time.get_ticks()
                         self.weapon_index = weapon_index
                         self.weapon = list(
                             WEAPON_DATA.keys())[self.weapon_index]
+
+            # switch spells
+            if self.can_switch_spell:
+                for spell_index in range(len(SPELL_DATA)):
+                    if keys[pygame.K_6 + spell_index]:
+                        self.can_switch_spell = False
+                        self.spell_switch_duration = pygame.time.get_ticks()
+                        self.spell_index = spell_index
+                        self.spell = list(SPELL_DATA.keys())[self.spell_index]
 
     def get_status(self):
         # idle status
@@ -140,9 +161,11 @@ class Player(pygame.sprite.Sprite):
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
 
-        self.hitbox.x += self.direction.x * speed
+        self.hitbox.x += self.direction.x * speed * (
+            1 + self.base_stats['dex'] / 10)
         self.collision('horizontal')
-        self.hitbox.y += self.direction.y * speed
+        self.hitbox.y += self.direction.y * speed * (
+            1 + self.base_stats['dex'] / 10)
         self.collision('vertical')
         self.rect.center = self.hitbox.center
 
@@ -176,8 +199,12 @@ class Player(pygame.sprite.Sprite):
                 self.destroy_attack()
 
         if not self.can_switch_weapon:
-            if current_time - self.weapon_switch_time >= self.weapon_switch_cd:
+            if current_time - self.weapon_switch_duration >= self.weapon_switch_cd:
                 self.can_switch_weapon = True
+
+        if not self.can_switch_spell:
+            if current_time - self.spell_switch_duration >= self.spell_switch_cd:
+                self.can_switch_spell = True
 
     def animate(self):
         animation = self.animations[self.status]
